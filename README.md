@@ -1,309 +1,851 @@
-# QM Slide Template 2026
+# QM SLIDE TEMPLATE 2026
 
-Quad Miners 임직원 전용 공식 PowerPoint 슬라이드 AI 생성 스킬 패키지입니다.  
-Claude Desktop · Claude Code · PowerPoint (Claude Add-in) 3가지 환경을 지원합니다.
-
----
-
-## ⚠️ 현재 사용 가능 환경 안내 (2026-04 기준)
-
-> **현재 Quad Miners 조직 설정상 Claude의 코드 실행(Code Execution) 기능이 비활성화되어 있습니다.**  
-> 이에 따라 현재는 **Claude Code CLI 환경에서만 사용 가능**합니다.
-
-| 환경 | 현재 사용 가능 여부 | 비고 |
-|------|-------------------|----|
-| **Claude Code CLI** | [OK] 사용 가능 | 아래 설치 절차 후 자연어로 요청 |
-| **Claude Desktop 앱** | [--] 현재 제한 | 코드 실행 활성화 후 사용 가능 |
-| **PowerPoint Add-in** | [--] 현재 제한 | 코드 실행 활성화 후 사용 가능 |
-
-### 코드 실행이 비활성화된 이유
-
-Claude Team/Enterprise 계정에서 **코드 실행 기능은 보안상의 이유로 기본값이 비활성화(OFF)** 되어 있습니다.  
-이는 Anthropic의 의도적인 보안 설계로, 코드 실행 환경이 외부 네트워크 접속과 결합될 경우 데이터 유출·프롬프트 인젝션 등의 위험이 있기 때문입니다.  
-Anthropic은 조직 관리자 활성화와 사용자 개인 opt-in, 두 단계 모두를 거치도록 권장하고 있습니다.
-
-### Claude Desktop · PowerPoint Add-in 사용을 원하시는 경우
-
-조직 내 코드 실행 기능 활성화는 IT/보안 담당자 및 조직 관리자(Organization Owner)의 검토와 승인이 필요합니다.  
-**기능 활성화 시 전략기획팀에서 별도 공지 및 사용 가능 여부를 안내드릴 예정입니다.**  
-현재는 아래 **Claude Code CLI** 방법을 통해 이용해 주세요.
+> **[!] 현재 CLI 환경에서만 사용 가능합니다.**
+>
+> 조직(Organization) 수준에서 코드 실행 기능이 비활성화된 경우,
+> Claude Desktop 및 PowerPoint Add-in에서는 슬라이드 생성 스킬이 동작하지 않습니다.
+> 현재는 **Claude Code CLI**를 통해서만 사용 가능합니다.
+>
+> 코드 실행 기능 활성화 문의: **Quad Miners 전략기획팀**
 
 ---
 
-## 다운로드
+**작성자**: Quad Miners 전략기획팀
+**문의처**: 전략기획팀 (내부 채널 또는 담당자 직접 연락)
+**버전**: v3.0.0
+**최종 업데이트**: 2026-04-26 (v3.0.0 Harness Engineering 완전 적용)
 
-최신 버전은 **[Releases](https://github.com/stfelix/QM_SLIDE_TEMPLATE_2026/releases/latest)** 페이지에서 다운로드하세요.
+---
+
+## 개요
+
+Quad Miners 직원들이 공식 브랜드 가이드라인에 맞는 고품질 PowerPoint 프레젠테이션을
+Claude Code CLI에서 자동으로 생성할 수 있는 스킬 패키지입니다.
+
+### 지원 운영체제
+
+| OS | 지원 여부 | 비고 |
+|----|-----------|------|
+| Windows 10 / 11 | 지원 | PowerShell 5.1 이상 |
+| macOS 12 Monterey 이상 | 지원 | Homebrew 권장 |
+| Ubuntu 20.04 / 22.04 / 24.04 | 지원 | apt 패키지 관리자 사용 |
+| 기타 Linux (Debian 계열) | 지원 | apt 기반 동일 적용 |
+
+### 특징
+
+- Quad Miners 공식 컬러 팔레트 (#00D8FF / #2F6BFF / #7A5CFF / #111827) 자동 적용
+- Noto Sans CJK KR 폰트 전용 사용
+- 26개 공식 로고 파일 포함
+- 표지 / 목차 / 섹션간지 / 내용 / 비교표 / 마무리 등 8가지 슬라이드 타입
+- 12개 슬래시 명령어로 세분화된 기능 제공
+- `shared/references/brand-core.md` 단일 브랜드 정의 (Single Source of Truth)
+- v3.0.0: Harness Engineering 완전 적용
+  - Compressed DSL 지시어 — SKILL.md 1개당 평균 **48% 토큰 절감**
+  - Output Schema Binding — `output-schema.md` 로 산출물 구조 고정, 환각 방지
+  - Guard Clause First — 생성 명령어 실행 전 사전조건 자동 점검
+  - Lazy Reference Pattern — 필요 시점에만 brand-core.md / output-schema.md 로드
+
+---
+
+## 설치 경로 구조 (v3.0.0)
+
+설치 완료 후 아래 구조가 됩니다. OS별로 스킬 루트 경로만 다릅니다.
+
+| OS | 스킬 루트 경로 |
+|----|---------------|
+| Windows | `C:\Users\<사용자명>\.claude\skills\qmslide\` |
+| macOS | `~/.claude/skills/qmslide/` |
+| Linux | `~/.claude/skills/qmslide/` |
 
 ```
-quad-miners-pptx-skill.skill  ← 이 파일 하나만 다운로드하면 됩니다 (약 118 MB)
+<스킬 루트>/
+└── qmslide/
+    ├── shared/                       <- 공유 에셋 (로고, 폰트, 스크립트, 레퍼런스)
+    │   ├── assets/
+    │   │   ├── fonts/                <- NotoSansCJKkr .otf 9종
+    │   │   └── logos/                <- 공식 로고 26종 + 배경/헤더/푸터
+    │   ├── references/               <- brand-core.md, output-schema.md, commands.md 등 7종
+    │   ├── scripts/                  <- check.py, sample.py, autoupdate.py 등
+    │   └── VERSION
+    ├── qmslide-deck/
+    │   └── SKILL.md                  <- /qmslide-deck 명령어
+    ├── qmslide-slide/
+    │   └── SKILL.md                  <- /qmslide-slide 명령어
+    ├── qmslide-build/
+    │   └── SKILL.md                  <- /qmslide-build 명령어
+    ├── qmslide-template/
+    │   └── SKILL.md                  <- /qmslide-template 명령어
+    ├── qmslide-check/
+    │   └── SKILL.md                  <- /qmslide-check 명령어
+    ├── qmslide-sample/
+    │   └── SKILL.md                  <- /qmslide-sample 명령어
+    ├── qmslide-update/
+    │   └── SKILL.md                  <- /qmslide-update 명령어
+    ├── qmslide-version/
+    │   └── SKILL.md                  <- /qmslide-version 명령어
+    ├── qmslide-font/
+    │   └── SKILL.md                  <- /qmslide-font 명령어
+    ├── qmslide-logo/
+    │   └── SKILL.md                  <- /qmslide-logo 명령어
+    ├── qmslide-color/
+    │   └── SKILL.md                  <- /qmslide-color 명령어
+    └── qmslide-qa/
+        └── SKILL.md                  <- /qmslide-qa 명령어
 ```
 
 ---
 
-## 설치 방법 (Claude Code CLI)
+## 설치 가이드 — Windows
 
-> Claude Code CLI가 설치되어 있어야 합니다.  
-> 미설치 시: `npm install -g @anthropic-ai/claude-code` (Node.js 필요)
+### Step 1. Node.js 설치 (Windows)
 
-### Step 1 · 스킬 디렉토리 생성
-
-```powershell
-New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills"
-```
-
-### Step 2 · 스킬 파일 압축 해제
-
-다운로드한 `.skill` 파일이 있는 폴더에서 실행합니다.
+> [!] **이미 Node.js가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: PowerShell에서 `node --version` 실행 시 버전이 출력되면 설치된 것입니다.
 
 ```powershell
-# .skill 파일을 zip으로 복사
-Copy-Item "quad-miners-pptx-skill.skill" "$HOME\.claude\skills\quad-miners-pptx-skill.zip"
-
-# 압축 해제 (반드시 skills\ 바로 아래로)
-Expand-Archive -Path "$HOME\.claude\skills\quad-miners-pptx-skill.zip" `
-               -DestinationPath "$HOME\.claude\skills\" -Force
+# 버전 확인 (출력되면 Skip)
+node --version
 ```
 
-### Step 3 · 설치 구조 확인
+설치되어 있지 않은 경우: https://nodejs.org 에서 LTS 버전을 다운로드하여 설치하세요.
+
+---
+
+### Step 2. Claude Code CLI 설치 (Windows)
+
+> [!] **이미 Claude Code CLI가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `claude --version` 실행 시 버전이 출력되면 설치된 것입니다.
 
 ```powershell
-ls "$HOME\.claude\skills\quad-miners-pptx-skill\"
-```
+# 버전 확인 (출력되면 Skip)
+claude --version
 
-아래 항목이 **직접** 보여야 정상입니다.
-
-```
-SKILL.md
-VERSION
-assets/
-references/
-scripts/
-```
-
-> [!] 위 항목들이 보이지 않고 `quad-miners-pptx-skill` 폴더만 보이면 **이중 중첩** 상태입니다.  
-> 이 경우 폴더를 삭제하고 Step 2를 다시 실행하세요.
-
-```powershell
-# 이중 중첩 발생 시 재설치
-Remove-Item -Recurse -Force "$HOME\.claude\skills\quad-miners-pptx-skill"
-Expand-Archive -Path "$HOME\.claude\skills\quad-miners-pptx-skill.zip" `
-               -DestinationPath "$HOME\.claude\skills\" -Force
+# 미설치 시 아래 실행
+# npm install -g @anthropic-ai/claude-code
 ```
 
 ---
 
-## 사용 방법 (실제 검증된 절차)
+### Step 3. .skill 파일 다운로드 (Windows)
 
-### Step 1 · Claude Code 실행
+> [!] **이미 다운로드했다면 이 단계를 건너뛰세요.**
 
-PowerShell에서 슬라이드를 저장할 폴더로 이동 후 실행합니다.
+[Releases 페이지](https://github.com/stfelix/QM_SLIDE_TEMPLATE_2026/releases)에서
+최신 버전의 `quad-miners-pptx-skill-v3.skill` 파일을 다운로드하세요.
+
+---
+
+### Step 4. 스킬 폴더 생성 (Windows)
+
+> [!] **이미 `.claude\skills` 폴더가 존재하면 이 단계를 건너뛰세요.**
+> 확인 방법: `ls "$env:USERPROFILE\.claude\skills"` 실행 시 폴더가 보이면 존재합니다.
 
 ```powershell
-cd C:\Users\사용자명\Documents\QM_Slides   # 원하는 저장 폴더로 이동
+# 폴더 존재 여부 확인 (폴더가 보이면 Skip)
+ls "$env:USERPROFILE\.claude\skills" 2>$null
+
+# 없을 경우 아래 실행
+# mkdir "$env:USERPROFILE\.claude\skills" -Force
+```
+
+---
+
+### Step 5. 스킬 압축 해제 및 설치 (Windows)
+
+> [!] **이미 설치한 적이 있다면 기존 폴더를 백업 후 덮어쓰거나, 없는 경우만 실행하세요.**
+> 확인 방법: `ls "$env:USERPROFILE\.claude\skills\qmslide"` 실행 시 폴더가 보이면 이미 설치된 것입니다.
+
+```powershell
+# 설치 여부 확인 (폴더가 보이면 Skip)
+ls "$env:USERPROFILE\.claude\skills\qmslide" 2>$null
+
+# -- 미설치 시 아래 실행 ------------------------------------------
+# 1) .skill 파일을 .zip으로 복사
+Copy-Item "C:\Users\Admin\Downloads\quad-miners-pptx-skill-v3.skill" `
+          "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip"
+
+# 2) 임시 폴더에 압축 해제
+Expand-Archive "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip" `
+               "$env:USERPROFILE\.claude\skills\_qm_extract" -Force
+
+# 3) qmslide 폴더로 이동 (압축 해제 결과가 qmslide\ 폴더로 자동 생성됨)
+Move-Item "$env:USERPROFILE\.claude\skills\_qm_extract\qmslide" `
+          "$env:USERPROFILE\.claude\skills\qmslide" -Force
+
+# 4) 임시 폴더 및 zip 파일 정리
+Remove-Item "$env:USERPROFILE\.claude\skills\_qm_extract" -Recurse -Force
+Remove-Item "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip"
+# ----------------------------------------------------------------
+```
+
+설치 결과 확인:
+
+```powershell
+ls "$env:USERPROFILE\.claude\skills\qmslide"
+# 아래 폴더들이 보여야 합니다:
+# shared  qmslide-deck  qmslide-slide  qmslide-build  ...
+```
+
+---
+
+### Step 6. Python 패키지 설치 (Windows)
+
+> [!] **이미 python-pptx, Pillow 가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `pip show python-pptx` 실행 시 정보가 출력되면 설치된 것입니다.
+
+```powershell
+# 설치 여부 확인 (정보가 출력되면 Skip)
+pip show python-pptx
+pip show Pillow
+
+# 미설치 시 아래 실행
+# pip install python-pptx Pillow requests
+```
+
+---
+
+### Step 7. 폰트 설치 (Windows)
+
+> [!] **이미 Noto Sans CJK KR 폰트가 시스템에 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: PowerPoint를 열고 폰트 목록에서 "Noto Sans CJK KR"이 보이면 설치된 것입니다.
+
+```powershell
+# 방법 A — 자동 설치 스크립트 (소스 폴더에서 실행)
+# cd C:\Users\Admin\Downloads\qm-skill-upload\QM_SLIDE_TEMPLATE_2026
+# python scripts\install_fonts.py
+```
+
+방법 B — 수동 설치 (자동 설치가 안 될 경우):
+
+1. `C:\Users\Admin\.claude\skills\qmslide\shared\assets\fonts\` 폴더 열기
+2. `.otf` 파일 전체 선택 -> 우클릭 -> **"모든 사용자를 위해 설치 (Install for all users)"**
+3. PowerPoint 재시작
+
+---
+
+### Step 8. Claude Code CLI 실행 및 스킬 확인 (Windows)
+
+```powershell
+# 소스 폴더로 이동
+cd C:\Users\Admin\Downloads\qm-skill-upload\QM_SLIDE_TEMPLATE_2026
+
+# Claude Code 실행
 claude
+
+# Claude Code 채팅에서 설치 확인 (처음 설치 시 필수)
+/qmslide-check
 ```
 
-### Step 2 · 스킬 활성화
+> [!] **`/qmslide-check` 후 모든 항목이 `[OK]`로 표시되면 설치 완료입니다.**
+> 문제가 있는 항목은 `python scripts\check.py --fix` 로 자동 수정할 수 있습니다.
 
-Claude Code 대화창에서 아래와 같이 입력합니다.
+---
 
-```
-다음 파일을 읽어서 스킬로 활성화해줘: C:\Users\사용자명\.claude\skills\quad-miners-pptx-skill\SKILL.md
-```
-
-> 실제 경로에서 `사용자명` 부분을 본인의 Windows 계정명으로 변경하세요.  
-> (예: `C:\Users\Admin\.claude\skills\quad-miners-pptx-skill\SKILL.md`)
-
-아래와 같은 응답이 오면 스킬 활성화 완료입니다.
+### Step 9. 샘플 슬라이드 생성으로 최종 검증 (Windows)
 
 ```
-SKILL.md 파일을 성공적으로 읽었습니다. 스킬이 활성화되었으며,
-Quad Miners PPTX 슬라이드 생성 스킬의 모든 가이드라인이 로드되었습니다.
+/qmslide-sample
 ```
 
-### Step 3 · 슬라이드 생성 요청
-
-**슬래시 명령어(/qmslide_deck 등)는 사용하지 않습니다.**  
-스킬 활성화 후 자연어로 바로 요청합니다.
+현재 폴더에 `qm_sample.pptx` 파일이 생성됩니다.
+PowerPoint로 열어 아래 항목을 확인하세요.
 
 ```
-2026년 글로벌 NDR 동향 슬라이드를 10장으로 만들어줘
-```
-
-```
-Network Blackbox 제품 소개서 8장, 한국어, 비교표 포함해서 만들어줘
-```
-
-```
-인도네시아 파트너사 제출용 NDR 사업 제안서, 영어, 총 12장으로 만들어줘
-```
-
-### Step 4 · 생성 결과 확인
-
-생성된 `.pptx` 파일은 **Claude Code를 실행한 현재 폴더**에 저장됩니다.
-
-```powershell
-# PowerShell에서 파일 확인
-ls *.pptx
-
-# 바로 열기
-Invoke-Item *.pptx
+[OK] 모든 슬라이드 우상단에 Quad Miners 로고
+[OK] 하단 푸터: QM 로고 + 저작권 + 페이지번호 + "Confidential"
+[OK] 배경: 연청색 기하학 육각형 패턴
+[OK] 폰트: Noto Sans CJK KR (한글 깨짐 없음)
+[OK] 색상: 파랑 #2F6BFF, 다크 #111827
 ```
 
 ---
 
-## 매 세션마다 스킬 활성화가 필요한 이유
+## 설치 가이드 — macOS
 
-현재 Claude Code CLI는 `~/.claude/skills/` 폴더의 스킬을 **자동으로 인식하지 않습니다** (알려진 제한 사항).  
-따라서 Claude Code를 새로 실행할 때마다 Step 2의 스킬 활성화를 반복해야 합니다.
+### Step 1. Homebrew 설치 (macOS)
 
-> 이 제한은 향후 Claude Code 업데이트에서 해결될 예정입니다.  
-> 개선 시 전략기획팀에서 공지 예정입니다.
+> [!] **이미 Homebrew가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `brew --version` 실행 시 버전이 출력되면 설치된 것입니다.
+
+```bash
+# 버전 확인 (출력되면 Skip)
+brew --version
+
+# 미설치 시 아래 실행
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 
 ---
 
-## 샘플 슬라이드 생성
+### Step 2. Node.js 설치 (macOS)
 
-스킬 활성화 후 아래와 같이 요청합니다.
+> [!] **이미 Node.js가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `node --version` 실행 시 버전이 출력되면 설치된 것입니다.
 
+```bash
+# 버전 확인 (출력되면 Skip)
+node --version
+
+# 미설치 시 Homebrew로 설치
+# brew install node
 ```
-샘플 슬라이드 만들어줘
-```
-
-6종 슬라이드 타입(표지·목차·간지·2열 콘텐츠·비교표·마무리)이 포함된 `qm_sample.pptx`가 현재 폴더에 생성됩니다.
 
 ---
 
-## 지원 슬라이드 타입
+### Step 3. Claude Code CLI 설치 (macOS)
 
-| 타입 | 설명 | 요청 예시 |
-|------|------|----------|
-| **표지 (title)** | 발표 표지 슬라이드 | `표지 슬라이드 만들어줘` |
-| **목차 (toc)** | 6섹션 2×3 그리드 목차 | `목차 슬라이드 만들어줘` |
-| **간지 (section)** | 섹션 구분 슬라이드 | `"01 제품 소개" 간지 만들어줘` |
-| **2열 본문 (content-split)** | 불릿+이미지 레이아웃 | `2열 본문 슬라이드 만들어줘` |
-| **비교표 (compare)** | 제품 비교 테이블 | `NDR vs 일반 방화벽 비교표 만들어줘` |
-| **데이터 시각화 (data-viz)** | 차트·그래프 슬라이드 | `분기별 위협 탐지 건수 차트 슬라이드 만들어줘` |
-| **마무리 (closing)** | Thank You 슬라이드 | `마무리 슬라이드 만들어줘` |
+> [!] **이미 Claude Code CLI가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `claude --version` 실행 시 버전이 출력되면 설치된 것입니다.
+
+```bash
+# 버전 확인 (출력되면 Skip)
+claude --version
+
+# 미설치 시 아래 실행
+# npm install -g @anthropic-ai/claude-code
+```
+
+---
+
+### Step 4. Python 및 패키지 설치 (macOS)
+
+> [!] **이미 python-pptx, Pillow 가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `pip3 show python-pptx` 실행 시 정보가 출력되면 설치된 것입니다.
+
+```bash
+# Python 버전 확인 (3.8 이상 필요)
+python3 --version
+
+# 설치 여부 확인 (정보가 출력되면 Skip)
+pip3 show python-pptx
+
+# 미설치 시 아래 실행
+# pip3 install python-pptx Pillow requests
+```
+
+---
+
+### Step 5. .skill 파일 다운로드 (macOS)
+
+> [!] **이미 다운로드했다면 이 단계를 건너뛰세요.**
+
+[Releases 페이지](https://github.com/stfelix/QM_SLIDE_TEMPLATE_2026/releases)에서
+최신 버전의 `quad-miners-pptx-skill-v3.skill` 파일을 다운로드하세요.
+
+또는 터미널에서 직접 다운로드:
+
+```bash
+# 미다운로드 시 아래 실행
+# curl -L -o ~/Downloads/quad-miners-pptx-skill-v3.skill \
+#   https://github.com/stfelix/QM_SLIDE_TEMPLATE_2026/releases/download/v3.0.0/quad-miners-pptx-skill-v3.skill
+```
+
+---
+
+### Step 6. 스킬 설치 (macOS)
+
+> [!] **이미 `~/.claude/skills/qmslide` 폴더가 존재하면 이 단계를 건너뛰세요.**
+> 확인 방법: `ls ~/.claude/skills/qmslide` 실행 시 폴더가 보이면 이미 설치된 것입니다.
+
+```bash
+# 설치 여부 확인 (폴더가 보이면 Skip)
+ls ~/.claude/skills/qmslide 2>/dev/null
+
+# -- 미설치 시 아래 실행 ------------------------------------------
+# 1) 스킬 폴더 생성
+mkdir -p ~/.claude/skills
+
+# 2) .skill 파일을 .zip으로 복사 후 압축 해제
+cp ~/Downloads/quad-miners-pptx-skill-v3.skill \
+   ~/Downloads/quad-miners-pptx-skill-v2.zip
+
+unzip ~/Downloads/quad-miners-pptx-skill-v2.zip \
+      -d ~/.claude/skills/
+
+# 3) 압축 해제 결과 확인 (qmslide 폴더가 생성되어야 함)
+ls ~/.claude/skills/qmslide
+
+# 4) zip 파일 정리
+rm ~/Downloads/quad-miners-pptx-skill-v2.zip
+# ----------------------------------------------------------------
+```
+
+---
+
+### Step 7. 폰트 설치 (macOS)
+
+> [!] **이미 Noto Sans CJK KR 폰트가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `fc-list | grep "Noto Sans CJK KR"` 실행 시 결과가 나오면 설치된 것입니다.
+
+```bash
+# 설치 여부 확인 (결과가 나오면 Skip)
+fc-list | grep "Noto Sans CJK KR"
+
+# 방법 A — 자동 설치 스크립트 (소스 폴더에서 실행)
+# cd ~/Downloads/QM_SLIDE_TEMPLATE_2026
+# python3 scripts/install_fonts.py
+
+# 방법 B — Homebrew로 설치
+# brew install --cask font-noto-sans-cjk-kr
+```
+
+방법 C — 수동 설치:
+
+1. `~/.claude/skills/qmslide/shared/assets/fonts/` 폴더 열기
+2. `.otf` 파일 전체를 **서체 관리자 (Font Book)** 에 드래그하여 설치
+3. 설치 완료 후 LibreOffice 또는 PowerPoint 재시작
+
+---
+
+### Step 8. Claude Code CLI 실행 및 스킬 확인 (macOS)
+
+```bash
+# 소스 폴더로 이동 (다운로드한 소스 위치에 맞게 변경)
+cd ~/Downloads/QM_SLIDE_TEMPLATE_2026
+
+# Claude Code 실행
+claude
+
+# Claude Code 채팅에서 설치 확인 (처음 설치 시 필수)
+/qmslide-check
+```
+
+> [!] **`/qmslide-check` 후 모든 항목이 `[OK]`로 표시되면 설치 완료입니다.**
+> 문제가 있는 항목은 `python3 scripts/check.py --fix` 로 자동 수정할 수 있습니다.
+
+---
+
+### Step 9. 샘플 슬라이드 생성으로 최종 검증 (macOS)
+
+```
+/qmslide-sample
+```
+
+현재 폴더에 `qm_sample.pptx` 파일이 생성됩니다.
+LibreOffice Impress 또는 PowerPoint로 열어 아래 항목을 확인하세요.
+
+```
+[OK] 모든 슬라이드 우상단에 Quad Miners 로고
+[OK] 하단 푸터: QM 로고 + 저작권 + 페이지번호 + "Confidential"
+[OK] 배경: 연청색 기하학 육각형 패턴
+[OK] 폰트: Noto Sans CJK KR (한글 깨짐 없음)
+[OK] 색상: 파랑 #2F6BFF, 다크 #111827
+```
+
+---
+
+## 설치 가이드 — Linux (Ubuntu / Debian 계열)
+
+### Step 1. 시스템 패키지 업데이트 (Linux)
+
+> [!] **최근에 apt update를 실행한 적이 있다면 이 단계를 건너뛰세요.**
+
+```bash
+# 최근에 업데이트했으면 Skip
+sudo apt update && sudo apt upgrade -y
+```
+
+---
+
+### Step 2. Node.js 설치 (Linux)
+
+> [!] **이미 Node.js 18 이상이 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `node --version` 실행 시 v18 이상이면 설치된 것입니다.
+
+```bash
+# 버전 확인 (v18 이상이면 Skip)
+node --version
+
+# 미설치 또는 구버전인 경우 NodeSource 저장소로 설치
+# curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+# sudo apt install -y nodejs
+```
+
+---
+
+### Step 3. Claude Code CLI 설치 (Linux)
+
+> [!] **이미 Claude Code CLI가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `claude --version` 실행 시 버전이 출력되면 설치된 것입니다.
+
+```bash
+# 버전 확인 (출력되면 Skip)
+claude --version
+
+# 미설치 시 아래 실행
+# npm install -g @anthropic-ai/claude-code
+```
+
+---
+
+### Step 4. Python 및 패키지 설치 (Linux)
+
+> [!] **이미 python-pptx, Pillow 가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `pip3 show python-pptx` 실행 시 정보가 출력되면 설치된 것입니다.
+
+```bash
+# Python 버전 확인 (3.8 이상 필요)
+python3 --version
+
+# pip3 없으면 먼저 설치
+# sudo apt install -y python3-pip
+
+# 설치 여부 확인 (정보가 출력되면 Skip)
+pip3 show python-pptx
+
+# 미설치 시 아래 실행
+# pip3 install python-pptx Pillow requests
+```
+
+---
+
+### Step 5. .skill 파일 다운로드 (Linux)
+
+> [!] **이미 다운로드했다면 이 단계를 건너뛰세요.**
+
+```bash
+# 미다운로드 시 아래 실행
+# curl -L -o ~/Downloads/quad-miners-pptx-skill-v3.skill \
+#   https://github.com/stfelix/QM_SLIDE_TEMPLATE_2026/releases/download/v3.0.0/quad-miners-pptx-skill-v3.skill
+
+# 다운로드 폴더가 없으면 생성
+# mkdir -p ~/Downloads
+```
+
+---
+
+### Step 6. 스킬 설치 (Linux)
+
+> [!] **이미 `~/.claude/skills/qmslide` 폴더가 존재하면 이 단계를 건너뛰세요.**
+> 확인 방법: `ls ~/.claude/skills/qmslide` 실행 시 폴더가 보이면 이미 설치된 것입니다.
+
+```bash
+# 설치 여부 확인 (폴더가 보이면 Skip)
+ls ~/.claude/skills/qmslide 2>/dev/null
+
+# -- 미설치 시 아래 실행 ------------------------------------------
+# 1) 스킬 폴더 생성
+mkdir -p ~/.claude/skills
+
+# 2) .skill 파일을 .zip으로 복사 후 압축 해제
+cp ~/Downloads/quad-miners-pptx-skill-v3.skill \
+   ~/Downloads/quad-miners-pptx-skill-v2.zip
+
+unzip ~/Downloads/quad-miners-pptx-skill-v2.zip \
+      -d ~/.claude/skills/
+
+# 3) 압축 해제 결과 확인
+ls ~/.claude/skills/qmslide
+
+# 4) zip 파일 정리
+rm ~/Downloads/quad-miners-pptx-skill-v2.zip
+# ----------------------------------------------------------------
+```
+
+---
+
+### Step 7. 폰트 설치 (Linux)
+
+> [!] **이미 Noto Sans CJK KR 폰트가 설치되어 있다면 이 단계를 건너뛰세요.**
+> 확인 방법: `fc-list | grep "Noto Sans CJK KR"` 실행 시 결과가 나오면 설치된 것입니다.
+
+```bash
+# 설치 여부 확인 (결과가 나오면 Skip)
+fc-list | grep "Noto Sans CJK KR"
+
+# 방법 A — apt로 설치 (Ubuntu/Debian)
+# sudo apt install -y fonts-noto-cjk
+
+# 방법 B — 자동 설치 스크립트 (소스 폴더에서 실행)
+# cd ~/Downloads/QM_SLIDE_TEMPLATE_2026
+# python3 scripts/install_fonts.py
+
+# 방법 C — 수동 설치
+# cp ~/.claude/skills/qmslide/shared/assets/fonts/*.otf ~/.fonts/
+# fc-cache -fv
+```
+
+---
+
+### Step 8. Claude Code CLI 실행 및 스킬 확인 (Linux)
+
+```bash
+# 소스 폴더로 이동 (다운로드한 소스 위치에 맞게 변경)
+cd ~/Downloads/QM_SLIDE_TEMPLATE_2026
+
+# Claude Code 실행
+claude
+
+# Claude Code 채팅에서 설치 확인 (처음 설치 시 필수)
+/qmslide-check
+```
+
+> [!] **`/qmslide-check` 후 모든 항목이 `[OK]`로 표시되면 설치 완료입니다.**
+> 문제가 있는 항목은 `python3 scripts/check.py --fix` 로 자동 수정할 수 있습니다.
+
+---
+
+### Step 9. 샘플 슬라이드 생성으로 최종 검증 (Linux)
+
+```
+/qmslide-sample
+```
+
+현재 폴더에 `qm_sample.pptx` 파일이 생성됩니다.
+LibreOffice Impress로 열어 아래 항목을 확인하세요.
+
+```bash
+# LibreOffice가 없으면 설치
+# sudo apt install -y libreoffice
+
+# 파일 열기
+libreoffice --impress qm_sample.pptx
+```
+
+```
+[OK] 모든 슬라이드 우상단에 Quad Miners 로고
+[OK] 하단 푸터: QM 로고 + 저작권 + 페이지번호 + "Confidential"
+[OK] 배경: 연청색 기하학 육각형 패턴
+[OK] 폰트: Noto Sans CJK KR (한글 깨짐 없음)
+[OK] 색상: 파랑 #2F6BFF, 다크 #111827
+```
+
+---
+
+## 명령어 목록
+
+> **참고**: `/qm` 은 과거 별칭(Alias)으로, 현재는 사용을 **비권장**합니다.
+> (`/qmslide-deck` 을 사용하세요.)
+> <!-- deprecated: /qm alias, use /qmslide-deck instead -->
+
+### 슬라이드 생성
+
+| 명령어 | 설명 |
+|--------|------|
+| `/qmslide-deck` | **전체 덱 생성** — 표지~마무리 완전한 덱 자동 생성 |
+| `/qmslide-slide` | **단일 슬라이드** — 슬라이드 1장 생성 또는 수정 |
+| `/qmslide-build` | **구성 지정 생성** — 슬라이드 타입 구성을 직접 지정 |
+| `/qmslide-template` | **빈 템플릿** — 지정 타입의 편집 가능한 빈 양식 |
+
+### 관리 및 확인
+
+| 명령어 | 설명 |
+|--------|------|
+| `/qmslide-check` | **설치 확인** — 9가지 항목 전체 점검 (처음 설치 후 필수) |
+| `/qmslide-sample` | **샘플 생성** — 6종 타입 완성 샘플 덱 즉시 생성 |
+| `/qmslide-update` | **자동 업데이트** — GitHub 최신 버전 확인 및 적용 |
+| `/qmslide-version` | **버전 확인** — 현재 버전 및 최신 버전 비교 |
+
+### 브랜드 리소스
+
+| 명령어 | 설명 |
+|--------|------|
+| `/qmslide-font` | **폰트 관리** — 설치, 확인, 웨이트 목록 |
+| `/qmslide-logo` | **로고 조회** — 26개 공식 로고 파일 정보 |
+| `/qmslide-color` | **컬러 조회** — 팔레트 코드 및 사용 가이드 |
+| `/qmslide-qa` | **품질 검사** — .pptx 브랜드 가이드라인 준수 검사 |
+
+---
+
+## 사용 예시
+
+### Claude Code CLI에서
+
+```
+/qmslide-deck Network Blackbox 2026 제품 소개서 만들어줘
+
+/qmslide-slide compare NDR vs Network Blackbox 비교표
+
+/qmslide-build title+toc(5)+section+content(3)+compare+closing  NDR 제안서
+
+/qmslide-sample
+
+/qmslide-qa output.pptx
+```
+
+### 자연어로도 동작합니다
+
+슬래시 명령어 없이 자연어 요청도 스킬이 적용됩니다.
+
+```
+"Quad Miners 공식 스타일로 NDR 제안서 슬라이드 만들어줘"
+"Network Blackbox 소개 발표 자료 10장으로 생성해줘"
+```
+
+### Python CLI로 직접 실행 (소스 폴더에서)
+
+```bash
+# 설치 확인
+python3 scripts/check.py
+
+# 샘플 생성 (qm_sample.pptx)
+python3 scripts/sample.py
+
+# 업데이트 확인
+python3 scripts/autoupdate.py --check-only
+```
+
+> Windows에서는 `python3` 대신 `python` 을 사용하세요.
 
 ---
 
 ## 브랜드 가이드라인 요약
 
-| 항목 | 규격 |
-|------|------|
-| **슬라이드 크기** | 16:9 — 33.87cm × 19.05cm (EMU: 12,192,000 × 6,858,000) |
-| **폰트** | Noto Sans CJK KR 전용 (다른 폰트 사용 금지) |
-| **최소 폰트 크기** | 12pt (절대 미만 금지) |
-| **주요 색상** | Cyan `#00D8FF` · Blue `#2F6BFF` · Purple `#7A5CFF` · Dark `#111827` |
-| **배경** | 흰색 `#FFFFFF` |
-| **로고 파일** | assets/logos/ 내 26종만 사용 |
+### 컬러 팔레트
 
----
+| 색상명 | 코드 | 주요 용도 |
+|--------|------|-----------|
+| Cyan | `#00D8FF` | 구분선 accent, 데이터 시각화 |
+| Blue | `#2F6BFF` | CTA, 섹션번호, 강조 텍스트 |
+| Purple | `#7A5CFF` | 보조 강조색 |
+| Dark | `#111827` | 메인 텍스트, 헤더 |
+| White | `#FFFFFF` | 슬라이드 배경 |
 
-## 스킬 패키지 구성
+### 폰트
 
-```
-quad-miners-pptx-skill/
-├── SKILL.md                    ← 스킬 핵심 정의 파일 (매 세션 로드 필요)
-├── VERSION                     ← 현재 버전 (1.0.0)
-├── references/
-│   ├── commands.md             ← 명령어 전체 레퍼런스
-│   ├── creation-guide.md       ← 슬라이드 생성 가이드 (PptxGenJS)
-│   ├── slide-specs.md          ← 슬라이드 타입별 EMU 좌표 스펙
-│   ├── font-setup.md           ← 폰트 설치 가이드
-│   └── brand-assets.md         ← 브랜드 로고 사용 가이드
-├── scripts/
-│   ├── check.py                ← 설치 확인 (9항목 27개 검사)
-│   ├── sample.py               ← 샘플 슬라이드 생성
-│   ├── autoupdate.py           ← GitHub 자동 업데이트 확인
-│   ├── pptx_command.py         ← 명령어 처리 보조 스크립트 (Claude 내부 사용)
-│   ├── install_fonts.py        ← 폰트 자동 설치 (Python)
-│   └── install_fonts.sh        ← 폰트 자동 설치 (Shell)
-├── assets/
-│   ├── fonts/                  ← Noto Sans CJK KR 7종 (.otf)
-│   └── logos/                  ← Quad Miners 공식 로고 26종 (.png)
-```
+- **전용 폰트**: `Noto Sans CJK KR` (다른 폰트 사용 절대 금지)
+- **최소 크기**: 12pt 이상
+- **웨이트**: Black / Bold / Medium / Regular / DemiLight / Light / Thin
 
-> [!] `scripts/pptx_command.py`는 Claude가 내부적으로 호출하는 보조 스크립트입니다.  
-> PowerShell에서 단독으로 실행해도 실제 슬라이드가 생성되지 않습니다.
+### 슬라이드 규격
 
----
+- **크기**: 16:9 (33.87cm × 19.05cm)
+- **EMU**: 12,192,000 × 6,858,000
+- **배경**: 흰색 (`#FFFFFF`)
 
-## 자동 업데이트
+### 슬라이드 타입
 
-스킬 활성화 시 자동으로 GitHub 최신 버전을 확인합니다.
-
-| 상태 | 표시 메시지 |
-|------|------------|
-| 최신 버전 | `[OK] 스킬 최신 버전(v1.x.x) 확인 완료` |
-| 업데이트 있음 | `[OK] 스킬이 v1.x → v1.y로 업데이트되었습니다` |
-| 연결 30초 초과 | `[!] GitHub 연결 시간 초과 — 현재 버전으로 진행` |
-
----
-
-## PowerPoint — Claude Add-in 연동
-
-> **사전 조건:** Claude for PowerPoint Add-in 설치 필요  
-> 지원 플랜: Pro · Max · **Team · Enterprise** (Quad Miners 임직원 대상)  
-> **현재 조직 코드 실행 비활성화로 인해 사용 불가. 활성화 시 별도 공지 예정.**
-
-### Add-in 설치
-
-#### 개인 설치 (Windows / Mac / Web)
-
-1. PowerPoint 열기
-2. **홈 (Home) 탭** → `추가 기능 (Add-ins)` 클릭  
-   *(Mac: 메뉴바 `도구 (Tools)` → `추가 기능 (Add-ins)`)*
-3. 검색창에 **`Claude by Anthropic`** 입력 → **추가 (Add)** 클릭
-4. Anthropic 계정으로 로그인 (Team / Enterprise 계정)
-5. PowerPoint 우측에 **Claude 사이드바** 표시되면 완료
-
-> Microsoft Marketplace 직접 설치:  
-> [https://marketplace.microsoft.com/en-us/product/office/wa200010001](https://marketplace.microsoft.com/en-us/product/office/wa200010001)
-
-#### 조직 일괄 배포 (IT 관리자)
-
-1. [Microsoft 365 관리 센터 (Admin Center)](https://admin.microsoft.com) → `설정 (Settings)` → `통합 앱 (Integrated Apps)`
-2. 검색창에 **`Claude by Anthropic`** 입력
-3. `배포 (Deploy)` → 배포 대상(전체 조직 또는 그룹) 선택 후 확인
-4. 배포 완료 후 사용자 PowerPoint에 자동 적용 (최대 24시간 소요)
-
----
-
-## 버전 이력
-
-| 버전 | 날짜 | 내용 |
+| 타입 | 이름 | 용도 |
 |------|------|------|
-| v1.0.0 | 2026-04 | 최초 배포 — Claude Desktop / Code / PowerPoint (Claude Add-in) 지원 |
+| TYPE 1 | 표지 (title) | 프레젠테이션 첫 장 |
+| TYPE 2 | 목차 (toc) | 섹션 목차 2×N 그리드 |
+| TYPE 3 | 섹션간지 (section) | 섹션 구분 페이지 |
+| TYPE 4 | 2열 본문 (split) | 텍스트 + 이미지 |
+| TYPE 5 | 데이터 시각화 (data-viz) | 차트 3열 패널 |
+| TYPE 6 | 이미지 (image-layout) | 1/2/3-Up 레이아웃 |
+| TYPE 7 | 타이포그래피 | 폰트/컬러 가이드 슬라이드 |
+| TYPE 8 | 마무리 (closing) | Thank You + QR코드 |
 
 ---
 
-## 알려진 제한 사항
+## 자주 발생하는 문제
 
-| 항목 | 내용 |
-|------|------|
-| 스킬 자동 인식 불가 | Claude Code CLI는 `~/.claude/skills/` 폴더를 자동으로 인식하지 않음. 매 세션마다 SKILL.md 수동 로드 필요 |
-| 슬래시 명령어 미동작 | `/qmslide_deck` 등 슬래시 명령어는 CLI에서 동작하지 않음. 자연어 요청 사용 |
-| Desktop/PowerPoint 미지원 | 조직 코드 실행 비활성화로 인해 현재 사용 불가 |
+### 슬래시 명령어가 "Unknown command"로 표시되는 경우
 
-> [!] `/qm` alias: 현재 버전(v1.0.0)에 `/qmslide_deck`의 단축 alias로 `/qm`이 정의되어 있으나,  
-> CLI 환경에서는 슬래시 명령어 자체가 동작하지 않으며, 향후 다른 스킬들과의 충돌 방지를 위해 **사용을 권장하지 않습니다.**  
-> 다음 릴리즈부터 해당 alias는 삭제될 예정입니다.
+Claude Code CLI에서 `/qmslide-deck` 등 명령어가 인식되지 않으면:
+
+1. 스킬 디렉토리 위치 확인:
+
+```bash
+# macOS / Linux
+ls ~/.claude/skills/qmslide
+# qmslide-deck, qmslide-slide 등 폴더가 직접 보여야 합니다
+
+# Windows (PowerShell)
+# ls "$env:USERPROFILE\.claude\skills\qmslide"
+```
+
+2. Claude Code 재시작 (새 탑레벨 디렉토리는 재시작 필요):
+
+```bash
+# Claude Code 종료 후 재실행
+claude
+```
+
+### 한글이 깨지는 경우 (네모 또는 물음표로 표시)
+
+Noto Sans CJK KR 폰트가 설치되지 않은 경우입니다.
+각 OS별 Step 7을 다시 실행하거나 수동으로 설치하세요.
+
+```bash
+# macOS / Linux — 자동 수정
+python3 scripts/install_fonts.py
+
+# Linux — apt로 설치
+# sudo apt install -y fonts-noto-cjk
+
+# Windows — 수동 설치
+# .claude\skills\qmslide\shared\assets\fonts\ 에서 .otf 파일 우클릭 -> 설치
+```
+
+### 설치 확인 항목 중 일부가 실패하는 경우
+
+```bash
+python3 scripts/check.py --fix
+# Windows: python scripts\check.py --fix
+```
+
+자동으로 Python 패키지 재설치, 폰트 복사, 디렉토리 생성 등을 수행합니다.
+
+---
+
+## 스킬 업데이트
+
+### 자동 업데이트 (Claude Code에서)
+
+```
+/qmslide-update
+```
+
+### 수동 업데이트 (GitHub에서)
+
+> [!] **v1.x, v2.x에서 v3.0.0으로 업그레이드하는 경우, 기존 폴더명이 다를 수 있습니다.**
+> 기존에 `quad-miners-pptx-skill/` 이름으로 설치한 경우 아래처럼 백업 후 새로 설치하세요.
+
+```bash
+# macOS / Linux
+# 1) 기존 스킬 백업 (이미 설치한 적 없으면 Skip)
+# mv ~/.claude/skills/quad-miners-pptx-skill \
+#    ~/.claude/skills/quad-miners-pptx-skill.bak
+
+# 2) Releases 페이지에서 최신 .skill 다운로드 후 Step 6 재실행
+```
+
+```powershell
+# Windows
+# 1) 기존 스킬 백업 (이미 설치한 적 없으면 Skip)
+# Rename-Item "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill" `
+#             "quad-miners-pptx-skill.bak"
+
+# 2) Releases 페이지에서 최신 .skill 다운로드 후 Step 5 재실행
+```
+
+---
+
+## GitHub 저장소 업데이트 방법
+
+```bash
+# 1) 현재 상태 확인
+git status
+
+# 2) 변경 파일 전체 추가
+git add -A
+
+# 3) 커밋
+git commit -m "feat: v3.0.0 — Harness Engineering 완전 적용 (DSL 지시어 + Output Schema Binding + Guard Clause)
+
+주요 변경사항:
+- 스킬 루트 폴더명 변경: skill_rebuilt -> qmslide
+- 스킬 구조를 명령어별 개별 디렉토리로 분리 (12개)
+- 명령어명 언더스코어->하이픈 수정 (Claude Code 규격 준수)
+  예: /qmslide_deck -> /qmslide-deck
+- /qm alias 제거 (비권장 처리)
+- shared/ 폴더로 공유 assets/scripts/references 통합
+- README.md 전면 재작성 (Windows/macOS/Linux 설치 가이드 분리, Skip 안내 포함)
+- PDF 가이드 재생성"
+
+# 4) 푸시
+git push origin main
+```
+
+새 `.skill` 파일은 GitHub -> **릴리즈 (Releases) -> 새 릴리즈 (New release)** 에서
+`v3.0.0` 태그로 업로드하세요.
 
 ---
 
 ## 문의
 
-Quad Miners 내부 사용자 전용입니다.  
-스킬 관련 문의 및 피드백은 **전략기획팀**으로 연락해 주세요.
+**Quad Miners 전략기획팀**으로 문의하세요.
 
----
-
-## 작성자
-
-| 항목 | 내용 |
-|------|------|
-| **작성팀** | Quad Miners 전략기획팀 |
-| **최초 작성일** | 2026-04 |
-| **문서 버전** | v1.0.0 |
+이 스킬의 기능 개선 요청, 버그 제보, 브랜드 가이드라인 관련 질문은
+모두 전략기획팀을 통해 접수됩니다.

@@ -162,10 +162,10 @@ ls "$env:USERPROFILE\.claude\skills\qmslide" 2>$null
 # -- 미설치 시 아래 실행 ------------------------------------------
 # 1) .skill 파일을 .zip으로 복사
 Copy-Item "C:\Users\Admin\Downloads\quad-miners-pptx-skill-v3.skill" `
-          "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip"
+          "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v3.zip"
 
 # 2) 임시 폴더에 압축 해제
-Expand-Archive "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip" `
+Expand-Archive "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v3.zip" `
                "$env:USERPROFILE\.claude\skills\_qm_extract" -Force
 
 # 3) qmslide 폴더로 이동 (압축 해제 결과가 qmslide\ 폴더로 자동 생성됨)
@@ -174,7 +174,7 @@ Move-Item "$env:USERPROFILE\.claude\skills\_qm_extract\qmslide" `
 
 # 4) 임시 폴더 및 zip 파일 정리
 Remove-Item "$env:USERPROFILE\.claude\skills\_qm_extract" -Recurse -Force
-Remove-Item "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v2.zip"
+Remove-Item "$env:USERPROFILE\.claude\skills\quad-miners-pptx-skill-v3.zip"
 # ----------------------------------------------------------------
 ```
 
@@ -357,16 +357,16 @@ mkdir -p ~/.claude/skills
 
 # 2) .skill 파일을 .zip으로 복사 후 압축 해제
 cp ~/Downloads/quad-miners-pptx-skill-v3.skill \
-   ~/Downloads/quad-miners-pptx-skill-v2.zip
+   ~/Downloads/quad-miners-pptx-skill-v3.zip
 
-unzip ~/Downloads/quad-miners-pptx-skill-v2.zip \
+unzip ~/Downloads/quad-miners-pptx-skill-v3.zip \
       -d ~/.claude/skills/
 
 # 3) 압축 해제 결과 확인 (qmslide 폴더가 생성되어야 함)
 ls ~/.claude/skills/qmslide
 
 # 4) zip 파일 정리
-rm ~/Downloads/quad-miners-pptx-skill-v2.zip
+rm ~/Downloads/quad-miners-pptx-skill-v3.zip
 # ----------------------------------------------------------------
 ```
 
@@ -529,16 +529,16 @@ mkdir -p ~/.claude/skills
 
 # 2) .skill 파일을 .zip으로 복사 후 압축 해제
 cp ~/Downloads/quad-miners-pptx-skill-v3.skill \
-   ~/Downloads/quad-miners-pptx-skill-v2.zip
+   ~/Downloads/quad-miners-pptx-skill-v3.zip
 
-unzip ~/Downloads/quad-miners-pptx-skill-v2.zip \
+unzip ~/Downloads/quad-miners-pptx-skill-v3.zip \
       -d ~/.claude/skills/
 
 # 3) 압축 해제 결과 확인
 ls ~/.claude/skills/qmslide
 
 # 4) zip 파일 정리
-rm ~/Downloads/quad-miners-pptx-skill-v2.zip
+rm ~/Downloads/quad-miners-pptx-skill-v3.zip
 # ----------------------------------------------------------------
 ```
 
